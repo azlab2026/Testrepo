@@ -15,16 +15,10 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
         enable-AzPSSession: true
 
-    - name: Azure CLI script
-      uses: azure/cli@v2
+    - name: Deploy Resource Group
+      uses: azure/bicep-deploy@v1
       with:
-        azcliversion: latest
-        inlineScript: |
-          az account show
-
-    - name: Azure PowerShell script
-      uses: azure/powershell@v2
-      with:
-        azPSVersion: "latest"
-        inlineScript: |
-          Get-AzWebApp
+        scope: subscription
+        template: ./rg.bicep
+        parameters: 'resourceGroupName=my-new-resource-group location=eastus' # Replace with your desired name and location
+        deploymentName: 'create-resource-group-deployment'
