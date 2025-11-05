@@ -1,24 +1,29 @@
-name: Deploy to Azure
-
+---
 on:
-  push:
-    branches:
-      - main
-
+  - push
+name: Run Azure Login With a Service Principal Secret
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-
-    - name: Azure Login
-      uses: azure/login@v1
-      with:
-        creds: ${{ secrets.AZURE_CREDENTIALS }}
-
-    - name: Run Azure CLI commands
-       run:
-         az group list
-        # Add your Azure CLI commands here
-		 az group create --name myBicepRG --location eastus
-          
+      - uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          enable-AzPSSession: true
+      - name: Azure CLI script
+        uses: azure/cli@v2
+        with:
+          azcliversion: latest
+          inlineScript: |
+            az account show
+      - name: Azure PowerShell script
+        uses: azure/powershell@v2
+        with:
+          azPSVersion: latest
+          inlineScript: |
+            Get-AzWebApp
+      - name: Create Azure Resource Group
+        uses: azure/cli@v1
+        with:
+          inlineScript: |
+            az group create --name my-resource-group --location eastus
