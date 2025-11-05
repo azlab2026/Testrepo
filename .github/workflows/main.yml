@@ -1,4 +1,4 @@
-name: Deploy Azure Resource Group with Bicep
+name: Deploy to Azure
 
 on:
   push:
@@ -6,23 +6,19 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - uses: actions/checkout@v4
 
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          client-id: ${{ secrets.AZURE_CREDENTIALS }}
-          tenant-id: ${{ secrets.AZURE_CREDENTIALS }}
-          subscription-id: ${{ secrets.AZURE_CREDENTIALS }}
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      - name: Deploy Resource Group
-        uses: azure/bicep-deploy@v1
-        with:
-          scope: subscription
-          template: ./rg.bicep
-          parameters: 'resourceGroupName=my-new-resource-group location=eastus' # Replace with your desired name and location
-          deploymentName: 'create-resource-group-deployment'
+    - name: Run Azure CLI commands
+       run:
+        az group list
+        # Add your Azure CLI commands here
+		    az group create --name myBicepRG --location eastus
+          
