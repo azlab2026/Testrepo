@@ -9,6 +9,7 @@ resource storageaccount 'Microsoft.Storage/storageAccounts@2025-01-01' = {
   location: location
   properties:{
     minimumTlsVersion: 'TLS1_2'
+    allowBlobPublicAccess: false
   }
   sku: {
     name:'Premium_LRS'}
